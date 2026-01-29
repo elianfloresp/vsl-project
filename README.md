@@ -1,73 +1,68 @@
-# React + TypeScript + Vite
+# VSL Landing Page - Protocolo Vitalidade
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Projeto de Landing Page de alta conversão (VSL) desenvolvido com foco em performance mobile extrema, rastreamento de dados (UTMs) persistente e otimização de taxa de conversão (CRO).
 
-Currently, two official plugins are available:
+O sistema implementa um funil de vendas funcional: **Página de Vendas (VSL) → Checkout → Página de Obrigado.**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🔗 **[VER PROJETO ONLINE (LIVE DEMO)](https://vsl-project-seven.vercel.app/)**
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🚀 Diferenciais Técnicos e Arquitetura
 
-## Expanding the ESLint configuration
+### 1. Sistema de Rastreamento (Advanced UTM Tracking)
+Para garantir a atribuição correta de vendas em campanhas de marketing, desenvolvi uma arquitetura de persistência de dados:
+- **Hook Personalizado (`useUTM`):** Captura automaticamente parâmetros como `utm_source`, `utm_medium` e `utm_campaign` na entrada.
+- **Persistência de Sessão:** Os dados não se perdem na navegação. Eles são injetados dinamicamente nos links de Checkout e repassados até a Página de Obrigado (e até no retorno à Home).
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 2. Performance Mobile
+Otimizações implementadas para carregamento instantâneo em redes 3G/4G:
+- **LiteYouTube Facade:** O player de vídeo carrega apenas a thumbnail (`loading="eager"`). O iframe pesado do YouTube só é injetado no DOM após a interação do usuário (clique), evitando o bloqueio da thread principal.
+- **Code Splitting & Tree Shaking:** Build otimizado via Vite.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 3. Funcionalidades de Conversão (CRO)
+Componentes desenvolvidos com gatilhos de Marketing de Resposta Direta:
+- **Smart Urgency Bar:** Contador regressivo que utiliza `localStorage`. A contagem persiste mesmo se o usuário atualizar a página (F5), mantendo a credibilidade da escassez.
+- **Checkout Responsivo:** Interface simulada com feedback visual e tratamento de rotas.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🧪 Como Testar o Rastreamento (UTMs)
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Para validar a persistência dos dados através do funil, utilize os links simulados abaixo:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+**Cenário 1: Tráfego Facebook Ads**
+> Simula um clique vindo de um anúncio focado em "Energia".
+https://vsl-project-seven.vercel.app/?utm_source=facebook&utm_medium=cpc&utm_campaign=protocolo_verao&utm_content=video_01&utm_term=saude
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+**Cenário 2: Tráfego Google Ads**
+> Simula um clique vindo de uma pesquisa direta.
+https://vsl-project-seven.vercel.app/?utm_source=google&utm_medium=search&utm_campaign=venda_direta&utm_term=vitalidade
+
+### ✅ Validação
+1. Clique em um dos links acima.
+2. Navegue pelo site: **Botão de Compra → Checkout → Finalizar Compra**.
+3. Na **Página de Obrigado**, observe a caixa cinza "Parâmetros Rastreados". Os dados da URL inicial estarão lá, provando que o rastreamento funcionou em todo o fluxo.
+
+---
+
+## 🛠️ Stack Tecnológica
+
+- **Core:** React 18 + Vite
+- **Estilização:** Tailwind CSS (Utility-first)
+- **Linguagem:** TypeScript (Tipagem estática estrita)
+- **Ícones:** Lucide React (SVG otimizado)
+- **Router:** React Router DOM v6
+- **Deploy:** Vercel (CI/CD)
+
+---
+
+## 💻 Instalação Local
+
+1. Siga estes passos no seu terminal (crie a pasta aonde você preferir):
+```bash
+git clone https://github.com/elianfloresp/vsl-project.git
+cd VSLPage
+npm install
+npm run dev
+
