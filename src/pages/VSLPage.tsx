@@ -27,9 +27,8 @@ export function VSLPage() {
         </div>
       </header>
 
-      <main className="flex-grow max-w-3xl mx-auto w-full bg-white shadow-xl my-0 md:my-8 rounded-none md:rounded-2xl overflow-hidden pb-12">
+      <main className="flex-grow max-w-3xl mx-auto w-full bg-white shadow-none md:shadow-xl my-0 md:my-8 md:rounded-2xl overflow-hidden pb-6">
         <div className="p-4 md:p-8 space-y-12">
-          {" "}
           <div className="mb-10 shadow-2xl rounded-lg overflow-hidden border border-gray-200">
             <LiteYouTube videoId="dQw4w9WgXcQ" />
           </div>
@@ -38,7 +37,7 @@ export function VSLPage() {
           </div>
           <ProductOffer checkoutLink={checkoutLink} />
           <Testimonials />
-          <div className="text-center mt-12 text-gray-500 text-sm">
+          <div className="text-center mt-8 text-gray-500 text-sm">
             <p>Dúvidas? Entre em contato com nosso suporte.</p>
           </div>
         </div>
