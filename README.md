@@ -8,24 +8,42 @@ O sistema implementa um funil de vendas funcional: **Página de Vendas (VSL) →
 
 ---
 
-## 🚀 Diferenciais Técnicos e Arquitetura
+## 🧠 Arquitetura e Decisões Técnicas
 
-### 1. Sistema de Rastreamento (Advanced UTM Tracking)
-Para garantir a atribuição correta de vendas em campanhas de marketing, desenvolvi uma arquitetura de persistência de dados:
-- **Hook Personalizado (`useUTM`):** Captura automaticamente parâmetros como `utm_source`, `utm_medium` e `utm_campaign` na entrada.
-- **Persistência de Sessão:** Os dados não se perdem na navegação. Eles são injetados dinamicamente nos links de Checkout e repassados até a Página de Obrigado (e até no retorno à Home).
+Abaixo detalho as escolhas arquiteturais para atender aos requisitos de **Performance** e **Rastreamento**:
 
-### 2. Performance Mobile
-Otimizações implementadas para carregamento instantâneo em redes 3G/4G:
-- **LiteYouTube Facade:** O player de vídeo carrega apenas a thumbnail (`loading="eager"`). O iframe pesado do YouTube só é injetado no DOM após a interação do usuário (clique), evitando o bloqueio da thread principal.
-- **Code Splitting & Tree Shaking:** Build otimizado via Vite.
+### 1. Gestão de Estado e Rastreamento (UTMs)
+Optei por não utilizar bibliotecas globais complexas (como Redux ou Context API) para as UTMs, pois o dado é estático por sessão.
+- **Decisão:** Criei o hook customizado `useUTM`.
+- **Por quê?** Ele abstrai a lógica de `URLSearchParams`. Ao centralizar isso, garantimos que se o time de marketing adicionar um novo parâmetro (ex: `utm_id`), alteramos apenas um arquivo e todos os links do site (CTAs, Checkout) são atualizados automaticamente.
+- **Persistência:** Utilizei a própria URL como "fonte da verdade" durante a navegação e injetei os parâmetros nos links de saída. Isso é mais robusto que `localStorage` para UTMs, pois evita que usuários compartilhem links "sujos" com dados de sessões antigas.
 
-### 3. Funcionalidades de Conversão (CRO)
-Componentes desenvolvidos com gatilhos de Marketing de Resposta Direta:
-- **Smart Urgency Bar:** Contador regressivo que utiliza `localStorage`. A contagem persiste mesmo se o usuário atualizar a página (F5), mantendo a credibilidade da escassez.
-- **Checkout Responsivo:** Interface simulada com feedback visual e tratamento de rotas.
+### 2. Otimização de Vídeo (Padrão Facade)
+O player do YouTube é o maior ofensor de performance em VSLs, carregando +1MB de JavaScript bloqueante.
+- **Decisão:** Implementei o componente `LiteYouTube` (Pattern Facade).
+- **Como funciona:** Renderizo apenas uma imagem estática (WebP/JPG) leve. O iframe real e os scripts do YouTube só são injetados no DOM quando o usuário clica em "Play".
+- **Impacto:** Redução drástica do TBT (Total Blocking Time) e LCP (Largest Contentful Paint), garantindo a nota 98+ no mobile.
 
----
+### 3. Persistência de Escassez (Urgency Bar)
+Para a barra de urgência, o estado volátil do React reiniciaria o timer a cada F5, quebrando a credibilidade da oferta.
+- **Decisão:** Sincronização com `localStorage`.
+- **Lógica:** Ao iniciar, o componente verifica se já existe um timestamp de fim gravado. Se sim, continua a contagem de onde parou. Isso aumenta a pressão psicológica de compra real no usuário.
+
+### 4. Estratégia de CSS (Tailwind)
+- **Decisão:** Utility-First com Tailwind CSS.
+- **Por quê?** Além da velocidade de desenvolvimento, o Tailwind gera um bundle de CSS minúsculo em produção (remove classes não usadas), o que é crucial para o carregamento em redes móveis 3G/4G, foco principal do teste.
+
+**Evidência de Performance:**
+<br />
+<div align="center">
+  <p><strong>Evidência de Performance (Lighthouse Mobile)</strong></p>
+  <img src="lighthouse.png" alt="Métricas Lighthouse" width="600">
+</div>
+<br />
+
+
+
+
 
 ## 🧪 Como Testar o Rastreamento (UTMs)
 
@@ -62,7 +80,7 @@ https://vsl-project-seven.vercel.app/?utm_source=google&utm_medium=search&utm_ca
 1. Siga estes passos no seu terminal (crie a pasta aonde você preferir):
 ```bash
 git clone https://github.com/elianfloresp/vsl-project.git
-cd VSLPage
+cd vsl-project
 npm install
 npm run dev
 
